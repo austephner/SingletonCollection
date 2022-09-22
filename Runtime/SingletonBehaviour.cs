@@ -37,19 +37,17 @@ namespace SingletonCollection
                 Debug.LogError($"There is no active instance of type {typeof(T).Name}");
                 return null;
             }
-
-            private set => _instance = value;
         }
 
         protected virtual void OnEnable()
         {
-            if (instance && instance != this)
+            if (_instance && _instance != this)
             {
                 DestroyImmediate(gameObject);
                 return;
             }
 
-            instance = (T)this;
+            _instance = (T)this;
 
             if (_dontDestroyOnLoad)
             {
@@ -61,18 +59,18 @@ namespace SingletonCollection
 
         protected virtual void OnDisable()
         {
-            if (instance == this)
+            if (_instance == this)
             {
-                instance = null;
+                _instance = null;
                 onDisabled?.Invoke(this);
             }
         }
 
         protected void OnDestroy()
         {
-            if (instance == this)
+            if (_instance == this)
             {
-                instance = null;
+                _instance = null;
                 onDestroyed?.Invoke(this);
             }
         }
