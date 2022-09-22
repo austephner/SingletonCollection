@@ -61,12 +61,12 @@ This attribute allows devs to use a resource as the source object for a singleto
 - Can be used on either `SingletonBehaviour<T>` or `SingletonScriptableObject<T>`
 
 ```c#
-[LoadFromResource($"Prefabs/System/{typeof(MySingleton).Name}")]
+[LoadFromResource("Prefabs/System/MySingleton")]
 public class MySingleton : SingletonBehaviour<MySingleton>
 {
 }
 
-[LoadFromResource($"Prefabs/System/{typeof(MyConfigurationSingleton).Name}")]
+[LoadFromResource($"Prefabs/System/MyConfigurationSingleton")]
 [CreateAssetMenu(menuName = "My Configuration")]
 public class MyConfigurationSingleton : SingletonScriptableObject<MyConfigurationSingleton>
 {
@@ -78,7 +78,7 @@ It's often not best practice to provide global access to certain manager or syst
 
 My favorite use case is a generic `GameConfiguration` implementation that can be accessed from multiple classes, behaviours, etc. from across the codebase:
 ```c#
-[LoadFromResource($"Configuration/{typeof(GameConfiguration).Name}")]
+[LoadFromResource("Configuration/GameConfiguration)")]
 [CreateAssetMenu(menuName = "Configuration/Game Configuration")]
 public class GameConfiguration : SingletonScriptableObject<GameConfiguration>
 {
