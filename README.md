@@ -11,7 +11,7 @@ Various types of singleton-like classes for Unity scripts and assets.
 
 # Singleton Types
 ### `SingletonBehaviour<T>`
-Generic singleton for `MonoBehaviour` implementations that requires nothing special.
+Provides singleton functionality for `MonoBehaviour` types.
 ```c#
 // Singleton implementation
 public class MySingleton : SingletonBehaviour<MySingleton> 
@@ -29,36 +29,61 @@ public class MyBehaviour : MonoBehaviour
 } 
 ```
 
-### `ResourceSingletonBehaviour<T>`
-Special type of singleton. When accessing `instance` in code for this type, a prefab will be instantiated from "Resources" if no instance has been set. This is useful for guaranteeing an instance of the singleton will be available. 
-
-- In order for the resource to be found correctly, a prefab must exist in `Resources/Prefabs/System` that is named after the implementation type.
-- Implementation and usage is the same as `SingletonBehaviour<T>`
-- Instances won't constantly be created, only 1 so long as `Resources.Load<T>()` succeeded
+### `SingletonScriptableObject<T>`
+Provides singleton functionality for `ScriptableObject` types.
 
 ```c#
-// singleton implementation
-public class MySingleton : ResourceSingletonBehaviour<MySingleton>
+// Singleton implementation
+[CreateAssetMenu(menuName = "My Singleton")]
+public class MySingleton : SingletonScriptableObject<MySingleton> 
 {
-    public void HelloWorld() => Debug.Log("Hello World");
+    public int someConfigurationValue = 20;
 }
 
-// A class that uses the singleton's function by calling `instance`
-public class MyBehaviour : MonoBehaviour
+// A class that uses the singleton's configuration value by calling `instance`
+public class MyPlayerBehaviour : MonoBehaviour 
 {
+    public int movementSpeed { get; private set;
+
     private void Start()
     {
-        MySingleton.instance.HelloWorld();
+        movementSpeed = MySingleton.instance.someConfigurationValue;
     }
-} 
+}
 ```
 
-### `ResourceScriptableObjectSingleton<T>`
-Combines the patterns found in `SingletonBehaviour<T>` and `ResourceSingletonBehaviour<T>` but for `ScriptableObject` types.
+# Attributes
+### LoadFromResourceAttribute
+This attribute allows devs to use a resource as the source object for a singleton when an `instance` has not yet been set in the scene. Thus referencing a singleton implementation's `instance` property would instantiate the resource at the given path provided it exists and a current `instance` has not yet been set.
+- Singletons can become prefabs or one-off configuration files
+- Prevents race conditions issues
+- Guarantees an instance is available for a singleton
+- Can be used on either `SingletonBehaviour<T>` or `SingletonScriptableObject<T>`
 
 ```c#
-TODO
+[LoadFromResource($"Prefabs/System/{typeof(MySingleton).Name}")]
+public class MySingleton : SingletonBehaviour<MySingleton>
+{
+}
+
+[LoadFromResource($"Prefabs/System/{typeof(MyConfigurationSingleton).Name}")]
+[CreateAssetMenu(menuName = "My Configuration")]
+public class MyConfigurationSingleton : SingletonScriptableObject<MyConfigurationSingleton>
+{
+}
 ```
 
-# To Do
-- Attributes for allowing custom resource paths instead of hardcoded resource paths
+# Use Cases
+It's often not best practice to provide global access to certain manager or system classes. However, in scenarios where game data is necessary on multiple levels, using singletons can be a means to save time and provide easy access.
+
+My favorite use case is a generic `GameConfiguration` implementation that can be accessed from multiple classes, behaviours, etc. from across the codebase:
+```c#
+[LoadFromResource($"Configuration/{typeof(GameConfiguration).Name}")]
+[CreateAssetMenu(menuName = "Configuration/Game Configuration")]
+public class GameConfiguration : SingletonScriptableObject<GameConfiguration>
+{
+    public int maxLocalPlayers = 4;
+    public int maxAfkSeconds = 20; 
+    // etc. 
+}
+```
