@@ -1,0 +1,12 @@
+{
+  "name": "com.austephnerllc.singletoncollection",
+  "version": "1.0.0",
+  "displayName": "Singleton Collection",
+  "description": "Various types of singleton-like classes for Unity scripts and assets.",
+  "unity": "2020.3",
+  "author": {
+    "name": "Austephner LLC",
+    "email": "support@austephner.com",
+    "url": "https://www.austephner.com"
+  }
+}
