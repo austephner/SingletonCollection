@@ -37,5 +37,10 @@ namespace SingletonCollection
 
             private set => _instance = value;
         }
+
+        /// <summary>
+        /// Denotes whether or not an instance of this singleton exists.
+        /// </summary>
+        public static bool exists => _instance;
     }
 }

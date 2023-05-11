@@ -14,6 +14,9 @@ namespace SingletonCollection
 
         private static T _instance;
 
+        /// <summary>
+        /// A singleton instance of type <see cref="T"/>.
+        /// </summary>
         public static T instance
         {
             get
@@ -38,6 +41,11 @@ namespace SingletonCollection
                 return null;
             }
         }
+
+        /// <summary>
+        /// Denotes whether or not an instance of this singleton exists and is instantiated.
+        /// </summary>
+        public static bool instantiated => _instance;
 
         protected virtual void OnEnable()
         {
